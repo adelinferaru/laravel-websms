@@ -1,0 +1,32 @@
+{
+    "name": "adelinferaru/laravel-websms",
+    "description": "Laravel package to allow Laravel apps to use the websms in Cyprus.",
+    "type": "library",
+    "keywords": ["laravel","websms"],
+    "require": {
+        "econea/nusoap": "~0.9.5.1",
+        "ext-soap": "*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Feraru Ioan Adelin",
+            "email": "adelin.feraru@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Adelinferaru\\LaravelWebSms\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Adelinferaru\\LaravelWebSms\\Providers\\ServiceProvider"
+            ],
+            "aliases": {
+                "WebSms": "Adelinferaru\\LaravelWebSms\\Facades\\WebSms"
+            }
+        }
+    }
+}
