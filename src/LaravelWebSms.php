@@ -37,7 +37,6 @@ class LaravelWebSms
         $obj->password = $this->password;
 
         $ret = $this->soap_client->call("Authenticate", array("parameters" => $obj));
-        //var_dump($this->soap_client);
         if ($ret['success'] == 1) {
             $session = $ret["session_id"];
             $this->setFileSession($session);
@@ -98,10 +97,7 @@ class LaravelWebSms
         $session = $this->getSession();
         $obj = new \stdClass;
         $obj->session_id = $session;
-        //new soapval("session_id2",false,"asd")
-        //array("parameters"=>);
         $res = $this->soap_client->call("getCredits",array("parameters"=>$session));
-        //var_dump($this->soap_client);
         $this->touchFile();
         return $res;
     }
@@ -122,15 +118,12 @@ class LaravelWebSms
         try
         {
             $ret = $this->soap_client->call("sendSM", array("parameters" => $obj));
-            //var_dump($this->soap_client);
             return $ret;
         }
         catch (\SoapFault $soapFault) {
 
             echo '<pre>REQUEST: ' . var_export($this->soap_client->request) . '</pre>';
             echo '<pre>RESPONSE: ' . var_export($this->soap_client->response) . '</pre>';
-            //echo "Request :<br>", $this->soap_client->__getLastRequest(), "<br>";
-            //echo "Response :<br>", $this->soap_client->__getLastResponse(), "<br>";
         }
     }
 
@@ -154,8 +147,6 @@ class LaravelWebSms
 
             echo '<pre>REQUEST: ' . var_export($this->soap_client->request) . '</pre>';
             echo '<pre>RESPONSE: ' . var_export($this->soap_client->response) . '</pre>';
-            //echo "Request :<br>", $this->soap_client->__getLastRequest(), "<br>";
-            //echo "Response :<br>", $this->soap_client->__getLastResponse(), "<br>";
         }
     }
 }
