@@ -12,30 +12,49 @@ class LaravelWebSms
      * @var nusoap_client
      */
     private $soap_client;
+    /**
+     * @var string
+     */
     private $username;
+    /**
+     * @var string
+     */
     private $password;
+    /**
+     * @var string
+     */
     private $session_path;
+    /**
+     * @var integer
+     */
     private $ttl;
 
-    function __construct($cfg)
+    /**
+     * LaravelWebSms constructor.
+     * @param $config
+     */
+    function __construct($config)
     {
-        $this->soap_client = new nusoap_client($cfg['wsdl_file'], "WSDL");
+        $this->soap_client = new nusoap_client( $config['wsdl_file'], "WSDL");
         $this->soap_client->soap_defencoding = 'UTF-8';
         $this->soap_client->decode_utf8 = FALSE;
         
-        $this->session_path = $cfg['session_path'];
-        $this->username = $cfg['username'];
-        $this->password = $cfg['password'];
-        $this->ttl = $cfg['session_ttl'];
+        $this->session_path = $config['session_path'];
+        $this->username = $config['username'];
+        $this->password = $config['password'];
+        $this->ttl = $config['session_ttl'];
 
     }
 
+    /**
+     * Authenticate to the SMS service provider
+     * @return mixed
+     */
     function authenticate()
     {
         $obj = new \stdClass;
         $obj->username = $this->username;
         $obj->password = $this->password;
-
         $ret = $this->soap_client->call("Authenticate", array("parameters" => $obj));
         if ($ret['success'] == 1) {
             $session = $ret["session_id"];
@@ -47,14 +66,15 @@ class LaravelWebSms
 
     }
 
+    /**
+     * @return bool|mixed|null|string
+     */
     function getSession()
     {
-        $session=$this->getFileSession();
-
-
-        if($session==null)
+        $session = $this->getFileSession();
+        if($session == null)
         {
-            $session=$this->authenticate();
+            $session = $this->authenticate();
             $this->setFileSession($session);
         }
 
@@ -62,19 +82,22 @@ class LaravelWebSms
     }
 
 
+    /**
+     * Get info from file session
+     * @return bool|null|string
+     */
     function getFileSession()
     {
-
         if(file_exists($this->session_path))
         {
-            $tm=filemtime($this->session_path);
+            $tm = filemtime($this->session_path);
 
-            if(time()-$tm<$this->ttl)
+            if(time()-$tm < $this->ttl)
             {
-                $session=file_get_contents($this->session_path);
+                $session = file_get_contents($this->session_path);
             }else
             {
-                $session=null;
+                $session = null;
             }
             return $session;
         }
@@ -82,27 +105,43 @@ class LaravelWebSms
         return null;
     }
 
+    /**
+     * @param $session
+     */
     function setFileSession($session)
     {
         file_put_contents($this->session_path, $session);
     }
 
+    /**
+     * Modify the session file timestamp
+     */
     function touchFile()
     {
         touch($this->session_path);
     }
 
-    function getCredits()
+    /**
+     * @return mixed
+     */
+    function getCreditsLeft()
     {
         $session = $this->getSession();
         $obj = new \stdClass;
         $obj->session_id = $session;
-        $res = $this->soap_client->call("getCredits",array("parameters"=>$session));
+        $res = $this->soap_client->call("getCredits", array("parameters"=>$session));
         $this->touchFile();
         return $res;
     }
 
-    function submitSM($from,$to,$message,$encoding="GSM")
+    /**
+     * @param $from
+     * @param $to
+     * @param $message
+     * @param string $encoding
+     * @return mixed
+     */
+    function sendSMS($from, $to, $message, $encoding = "GSM")
     {
         $obj = new \stdClass;
         $obj->session_id = $this->getSession();
@@ -136,8 +175,6 @@ class LaravelWebSms
         $obj = new \stdClass;
         $obj->sessionId = $this->getSession();
         $obj->batchId = $batchId;
-
-
         try
         {
             $ret = $this->soap_client->call("getBatchStatus", array("parameters" => $obj ));
