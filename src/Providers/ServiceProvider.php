@@ -18,7 +18,7 @@ class ServiceProvider extends BaseServiceProvider
     public function boot()
     {
 
-        $configFile = __DIR__ . '/config/websms.php';
+        $configFile = __DIR__ . '/../config/websms.php';
 
         $this->publishes([
             $configFile => config_path('websms.php')
