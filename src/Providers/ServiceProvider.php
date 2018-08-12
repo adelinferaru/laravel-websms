@@ -17,14 +17,13 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function boot()
     {
-
         $configFile = __DIR__ . '/../config/websms.php';
 
         $this->publishes([
-            $configFile => config_path('websms.php')
+            __DIR__ . '/../config/websms.php' => config_path('websms.php')
         ]);
 
-        $this->mergeConfigFrom($configFile, 'websms');
+
 
 
     }
@@ -36,6 +35,8 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__ . '/../config/websms.php', 'websms');
+
         $this->app->singleton(LaravelWebSms::class, function ($app) {
             return new LaravelWebSms($app['config']['websms']);
         });
