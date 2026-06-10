@@ -64,9 +64,7 @@ use Adelinferaru\LaravelWebSms\WebSmsClient;
 
 class OrderShippedNotifier
 {
-    public function __construct(private WebSmsClient $webSms)
-    {
-    }
+    public function __construct(private WebSmsClient $webSms) {}
 
     public function notify(string $phone): void
     {
@@ -129,4 +127,4 @@ composer lint      # Pint
 
 ## License
 
-The MIT License. See [LICENSE](LICENSE).
+The MIT License. Copyright (c) 2017-2026 Feraru Ioan Adelin. See [LICENSE](LICENSE).
