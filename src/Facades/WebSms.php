@@ -1,15 +1,24 @@
-<?php namespace Adelinferaru\LaravelWebSms\Facades;
+<?php
 
-use Adelinferaru\LaravelWebSms\LaravelWebSms;
-use \Illuminate\Support\Facades\Facade;
+declare(strict_types=1);
 
+namespace Adelinferaru\LaravelWebSms\Facades;
+
+use Adelinferaru\LaravelWebSms\WebSmsClient;
+use Illuminate\Support\Facades\Facade;
+
+/**
+ * @method static object sendSms(string $from, string|list<string> $to, string $message, string $encoding = 'GSM')
+ * @method static object getCredits()
+ * @method static object getBatchStatus(int|string $batchId)
+ * @method static string authenticate()
+ *
+ * @see WebSmsClient
+ */
 class WebSms extends Facade
 {
-    /**
-     * {@inheritDoc}
-     */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
-        return LaravelWebSms::class;
+        return WebSmsClient::class;
     }
 }

@@ -2,8 +2,7 @@
 .DS_Store
 .idea/
 vendor/
-composer-dev.json
 composer.lock
-storage/
-bootstrap/
-routes/
+.phpunit.cache/
+.phpunit.result.cache
+build/
