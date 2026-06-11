@@ -40,7 +40,7 @@ class WebSmsServiceProvider extends ServiceProvider
         });
 
         Notification::resolved(static function (ChannelManager $service): void {
-            $service->extend('websms', static fn (Application $app): WebSmsChannel => $app->make(WebSmsChannel::class));
+            $service->extend('websms', fn (Application $app): WebSmsChannel => $app->make(WebSmsChannel::class));
         });
     }
 
