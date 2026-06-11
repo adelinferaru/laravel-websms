@@ -14,6 +14,7 @@
         "php": "^8.2",
         "ext-soap": "*",
         "illuminate/contracts": "^12.0 || ^13.0",
+        "illuminate/notifications": "^12.0 || ^13.0",
         "illuminate/support": "^12.0 || ^13.0"
     },
     "require-dev": {
@@ -43,7 +44,7 @@
         }
     },
     "scripts": {
-        "analyse": "phpstan analyse",
+        "analyse": "phpstan analyse --memory-limit=512M",
         "lint": "pint --test",
         "test": "phpunit"
     },
