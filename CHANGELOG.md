@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Scheduled sending: `sendSms(..., scheduledFor: $dateTime)` and `cancelScheduledBatch()`.
+- Two-way SMS: `getIncomingMessages()` polls the inbox with optional date/ID cursors.
+- `pushSms()` (send to a stored contact), `isSessionValid()`, and contact-group
+  management: `createContactGroup()`, `listContactGroups()`, `addContact()`,
+  `checkContactInGroup()`, `removeContactFromGroup()` — the package now wraps all 13
+  operations the gateway WSDL defines.
+- `websms` Laravel notification channel with a fluent `WebSmsMessage`
+  (`content`/`from`/`unicode`/`encoding`/`scheduledFor`) and a `WEBSMS_FROM`
+  default-sender config/env var.
+- `DataCoding` enum (`GSM`/`UCS2`); `sendSms()` validates the encoding and the
+  gateway's 100-recipients-per-call limit before calling out.
+
+### Changed
+
+- `getCredits()` returns the credit balance as `float` (previously the raw response
+  object) — the WSDL defines the response as a bare float element.
+- New dependency on `illuminate/notifications` for the notification channel.
+
+### Fixed
+
+- `getCredits()` now sends the bare `session_id` element the WSDL requires; 2.0.0
+  wrapped it in a parameter object the gateway does not accept.
+
 ## [2.0.1] - 2026-06-11
 
 ### Changed

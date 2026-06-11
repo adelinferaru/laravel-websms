@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Adelinferaru\LaravelWebSms\Tests;
 
+use Adelinferaru\LaravelWebSms\Notifications\WebSmsChannel;
 use Adelinferaru\LaravelWebSms\WebSmsClient;
+use Illuminate\Notifications\ChannelManager;
 
 class WebSmsServiceProviderTest extends TestCase
 {
@@ -33,5 +35,17 @@ class WebSmsServiceProviderTest extends TestCase
             $this->app->make(WebSmsClient::class),
             $this->app->make('websms')
         );
+    }
+
+    public function test_the_websms_notification_channel_is_registered(): void
+    {
+        $channel = $this->app->make(ChannelManager::class)->channel('websms');
+
+        $this->assertInstanceOf(WebSmsChannel::class, $channel);
+    }
+
+    public function test_the_default_sender_config_defaults_to_null(): void
+    {
+        $this->assertNull(config('websms.from'));
     }
 }

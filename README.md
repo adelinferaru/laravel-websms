@@ -50,11 +50,102 @@ WebSms::sendSms('ACME', '+35799123456', 'Your order has shipped!');
 // Multiple recipients
 WebSms::sendSms('ACME', ['+35799123456', '+35799654321'], 'Flash sale today only.');
 
-// Remaining account credits
+// Remaining account credits (float)
 $credits = WebSms::getCredits();
 
-// Delivery status of a sent batch
+// Delivery status of a sent batch (per-message DELIVERED / EXPIRED / UNDELIVERABLE / UNKNOWN)
 $status = WebSms::getBatchStatus($batchId);
+```
+
+The gateway accepts at most 100 recipients per `sendSms()` call; the package validates
+this before calling out.
+
+### Scheduled messages
+
+Pass a `DateTimeInterface` to defer delivery, and cancel a scheduled batch before it goes out:
+
+```php
+$response = WebSms::sendSms('ACME', $phone, 'Sale starts now!', scheduledFor: now()->addDay());
+
+WebSms::cancelScheduledBatch($response->batchId);
+```
+
+### Two-way SMS (incoming messages)
+
+The gateway exposes received messages via polling (there are no webhooks). Use the
+cursors from each response to fetch only newer messages:
+
+```php
+$inbox = WebSms::getIncomingMessages();                       // first page
+$more  = WebSms::getIncomingMessages($since, $lastMessageId); // newer than the cursors
+
+foreach ($inbox->messages ?? [] as $message) {
+    // $message->id, ->receivedOn, ->from, ->to, ->message, ->read
+}
+
+if ($inbox->hasMore) {
+    // keep polling with the returned lastMessageDate / lastMessageId
+}
+```
+
+### Contacts and groups
+
+```php
+WebSms::createContactGroup('Customers');
+WebSms::listContactGroups();
+WebSms::addContact('John', '+35799123456', $groupId);
+WebSms::checkContactInGroup('+35799123456', $groupId);
+WebSms::removeContactFromGroup('+35799123456', groupId: $groupId);
+
+// Send (optionally scheduled) to a stored contact
+WebSms::pushSms('+35799123456', 'Hello!', sendAt: now()->addHour());
+```
+
+## Notification channel
+
+The package registers a `websms` notification channel, so you can deliver Laravel
+notifications as SMS. Set a default sender in `.env`:
+
+```dotenv
+WEBSMS_FROM=ACME
+```
+
+Return the channel from your notification and implement `toWebsms()`:
+
+```php
+use Adelinferaru\LaravelWebSms\Notifications\WebSmsMessage;
+use Illuminate\Notifications\Notification;
+
+class OrderShipped extends Notification
+{
+    public function via(object $notifiable): array
+    {
+        return ['websms'];
+    }
+
+    public function toWebsms(object $notifiable): WebSmsMessage
+    {
+        return WebSmsMessage::create('Your order has shipped!')
+            ->from('ACME')                       // optional, defaults to WEBSMS_FROM
+            ->unicode()                          // optional, UCS2 for non-GSM text
+            ->scheduledFor(now()->addMinutes(5)); // optional
+    }
+}
+```
+
+`toWebsms()` may also return a plain string. Tell the channel where to send by adding
+a route to your notifiable:
+
+```php
+class User extends Authenticatable
+{
+    use Notifiable;
+
+    public function routeNotificationForWebsms(): string
+    {
+        return $this->phone_number;
+    }
+}
 ```
 
 Or inject the client where you prefer constructor injection:
@@ -92,11 +183,14 @@ try {
 
 ### Message encoding
 
-`sendSms()` defaults to the `GSM` data coding. Pass a different encoding as the fourth
-argument when sending non-GSM content:
+`sendSms()` defaults to the `GSM` data coding — the only encodings the gateway accepts
+are `GSM` and `UCS2` (Unicode). Pass the `DataCoding` enum (or its string value) when
+sending non-GSM content:
 
 ```php
-WebSms::sendSms('ACME', $phone, 'Γειά σου', 'UCS2');
+use Adelinferaru\LaravelWebSms\DataCoding;
+
+WebSms::sendSms('ACME', $phone, 'Γειά σου', DataCoding::Ucs2);
 ```
 
 ## Upgrading from 1.x
