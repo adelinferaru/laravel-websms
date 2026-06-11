@@ -101,6 +101,39 @@ WebSms::removeContactFromGroup('+35799123456', groupId: $groupId);
 WebSms::pushSms('+35799123456', 'Hello!', sendAt: now()->addHour());
 ```
 
+## REST client
+
+The package also ships a client for the gateway's REST API — a lighter transport that
+authenticates with an API key (generated in your WebSMS account area) instead of a
+username/password session. The REST API covers sending, credits, and batch status;
+scheduling, two-way SMS, and contacts are SOAP-only.
+
+```dotenv
+WEBSMS_API_KEY=XXX-XXX-XXXXX
+```
+
+```php
+use Adelinferaru\LaravelWebSms\Facades\WebSmsRest;
+
+// The REST API takes one recipient per request
+WebSmsRest::sendSms('ACME', '35799123456', 'Your order has shipped!');
+
+// Convenience wrapper: one request per recipient
+WebSmsRest::sendSmsToMany('ACME', ['35799123456', '35799654321'], 'Hello');
+
+WebSmsRest::checkKey();              // bool
+WebSmsRest::getCredits();            // float
+WebSmsRest::getBatchStatus($batchId);
+```
+
+Recipient numbers use the `357...` or `00357...` prefix format; a leading `+` is
+stripped automatically since the gateway rejects it. Sender IDs must be 3–11
+characters. Message length per encoding: GSM 160/306/459 characters for 1/2/3
+segments, UCS2 70/134/201.
+
+`Adelinferaru\LaravelWebSms\WebSmsRestClient` is also container-resolvable for
+constructor injection, like the SOAP client.
+
 ## Notification channel
 
 The package registers a `websms` notification channel, so you can deliver Laravel

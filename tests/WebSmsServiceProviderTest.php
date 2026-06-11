@@ -6,6 +6,7 @@ namespace Adelinferaru\LaravelWebSms\Tests;
 
 use Adelinferaru\LaravelWebSms\Notifications\WebSmsChannel;
 use Adelinferaru\LaravelWebSms\WebSmsClient;
+use Adelinferaru\LaravelWebSms\WebSmsRestClient;
 use Illuminate\Notifications\ChannelManager;
 
 class WebSmsServiceProviderTest extends TestCase
@@ -35,6 +36,20 @@ class WebSmsServiceProviderTest extends TestCase
             $this->app->make(WebSmsClient::class),
             $this->app->make('websms')
         );
+    }
+
+    public function test_the_rest_client_is_registered_as_a_singleton_with_its_alias(): void
+    {
+        $first = $this->app->make(WebSmsRestClient::class);
+
+        $this->assertSame($first, $this->app->make(WebSmsRestClient::class));
+        $this->assertSame($first, $this->app->make('websms.rest'));
+    }
+
+    public function test_the_rest_config_defaults_are_merged(): void
+    {
+        $this->assertSame('https://websms.com.cy/api', config('websms.rest.url'));
+        $this->assertNull(config('websms.rest.key'));
     }
 
     public function test_the_websms_notification_channel_is_registered(): void
