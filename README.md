@@ -3,13 +3,15 @@
 [![CI](https://github.com/adelinferaru/laravel-websms/actions/workflows/ci.yml/badge.svg)](https://github.com/adelinferaru/laravel-websms/actions/workflows/ci.yml)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/adelinferaru/laravel-websms.svg)](https://packagist.org/packages/adelinferaru/laravel-websms)
 [![Total Downloads](https://img.shields.io/packagist/dt/adelinferaru/laravel-websms.svg)](https://packagist.org/packages/adelinferaru/laravel-websms)
+[![PHP Version](https://img.shields.io/packagist/php-v/adelinferaru/laravel-websms.svg)](composer.json)
 [![License](https://img.shields.io/packagist/l/adelinferaru/laravel-websms.svg)](LICENSE)
 
 Send SMS from Laravel applications through the [WebSMS.com.cy](https://www.websms.com.cy) gateway (Cyprus).
 
-The package wraps the gateway's SOAP web service using PHP's native `soap` extension, handles
-authentication transparently, and caches the gateway session via Laravel's cache so repeated
-sends don't re-authenticate on every request.
+The package wraps the gateway's SOAP web service (full feature set: bulk and scheduled
+sending, two-way SMS, contact groups) and its REST API (API-key sending), handles
+authentication transparently, caches the gateway session via Laravel's cache, and ships
+a native Laravel notification channel.
 
 ## Requirements
 
