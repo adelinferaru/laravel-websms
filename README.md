@@ -26,7 +26,8 @@ composer require adelinferaru/laravel-websms
 
 The service provider and the `WebSms` facade are registered via package auto-discovery.
 
-Add your credentials to `.env`:
+Add your credentials to `.env` (the username is the e-mail address you registered
+with at WebSMS.com.cy):
 
 ```dotenv
 WEBSMS_USERNAME=your-username
@@ -47,10 +48,10 @@ Via the facade:
 use Adelinferaru\LaravelWebSms\Facades\WebSms;
 
 // Single recipient
-WebSms::sendSms('ACME', '+35799123456', 'Your order has shipped!');
+WebSms::sendSms('ACME', '99123456', 'Your order has shipped!');
 
 // Multiple recipients
-WebSms::sendSms('ACME', ['+35799123456', '+35799654321'], 'Flash sale today only.');
+WebSms::sendSms('ACME', ['99123456', '99654321'], 'Flash sale today only.');
 
 // Remaining account credits (float)
 $credits = WebSms::getCredits();
@@ -60,7 +61,9 @@ $status = WebSms::getBatchStatus($batchId);
 ```
 
 The gateway accepts at most 100 recipients per `sendSms()` call; the package validates
-this before calling out.
+this before calling out. Per the vendor's SOAP guide, recipient numbers use the local
+Cypriot `9XXXXXXX` format (mobiles starting 99, 96 or 97); the REST API instead takes
+`357...`/`00357...`-prefixed numbers.
 
 ### Scheduled messages
 
@@ -95,12 +98,12 @@ if ($inbox->hasMore) {
 ```php
 WebSms::createContactGroup('Customers');
 WebSms::listContactGroups();
-WebSms::addContact('John', '+35799123456', $groupId);
-WebSms::checkContactInGroup('+35799123456', $groupId);
-WebSms::removeContactFromGroup('+35799123456', groupId: $groupId);
+WebSms::addContact('John', '99123456', $groupId);
+WebSms::checkContactInGroup('99123456', $groupId);
+WebSms::removeContactFromGroup('99123456', groupId: $groupId);
 
 // Send (optionally scheduled) to a stored contact
-WebSms::pushSms('+35799123456', 'Hello!', sendAt: now()->addHour());
+WebSms::pushSms('99123456', 'Hello!', sendAt: now()->addHour());
 ```
 
 ## REST client
