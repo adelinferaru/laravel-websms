@@ -40,6 +40,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | REST API
+    |--------------------------------------------------------------------------
+    |
+    | Settings for the WebSmsRestClient, an alternative transport that
+    | authenticates with an API key (generated in your WebSMS account area)
+    | instead of a username/password session. The REST API covers sending to
+    | a single recipient per request, credits, and batch status.
+    |
+    */
+
+    'rest' => [
+        'url' => env('WEBSMS_REST_URL', 'https://websms.com.cy/api'),
+        'key' => env('WEBSMS_API_KEY'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Session caching
     |--------------------------------------------------------------------------
     |

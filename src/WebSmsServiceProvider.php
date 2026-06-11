@@ -7,6 +7,7 @@ namespace Adelinferaru\LaravelWebSms;
 use Adelinferaru\LaravelWebSms\Notifications\WebSmsChannel;
 use Illuminate\Contracts\Cache\Factory as CacheFactory;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\Client\Factory as HttpFactory;
 use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
@@ -31,6 +32,15 @@ class WebSmsServiceProvider extends ServiceProvider
         });
 
         $this->app->alias(WebSmsClient::class, 'websms');
+
+        $this->app->singleton(WebSmsRestClient::class, function (Application $app): WebSmsRestClient {
+            /** @var array{url: string, key: string|null} $config */
+            $config = $app->make('config')->get('websms.rest');
+
+            return new WebSmsRestClient($app->make(HttpFactory::class), $config);
+        });
+
+        $this->app->alias(WebSmsRestClient::class, 'websms.rest');
 
         $this->app->bind(WebSmsChannel::class, function (Application $app): WebSmsChannel {
             /** @var string|null $from */

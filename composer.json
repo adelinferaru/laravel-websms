@@ -13,7 +13,9 @@
     "require": {
         "php": "^8.2",
         "ext-soap": "*",
+        "guzzlehttp/guzzle": "^7.8",
         "illuminate/contracts": "^12.0 || ^13.0",
+        "illuminate/http": "^12.0 || ^13.0",
         "illuminate/notifications": "^12.0 || ^13.0",
         "illuminate/support": "^12.0 || ^13.0"
     },
@@ -39,7 +41,8 @@
                 "Adelinferaru\\LaravelWebSms\\WebSmsServiceProvider"
             ],
             "aliases": {
-                "WebSms": "Adelinferaru\\LaravelWebSms\\Facades\\WebSms"
+                "WebSms": "Adelinferaru\\LaravelWebSms\\Facades\\WebSms",
+                "WebSmsRest": "Adelinferaru\\LaravelWebSms\\Facades\\WebSmsRest"
             }
         }
     },
